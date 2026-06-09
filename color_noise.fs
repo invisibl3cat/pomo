@@ -1,7 +1,7 @@
 #version 420
 
 in vec2 fragTexCoord;
-uniform float time;
+uniform int time;
 
 uniform sampler2D tex0;
 
@@ -14,7 +14,7 @@ float rand(float c, float x, float y, float t)
 
 float shift(float c, float x, float y, float t)
 {
-	float r = rand(c, x, y, floor(t * 8.5) / 8.5);
+	float r = rand(c, x, y, t);
 	return fract(r) / 200;
 }
 
@@ -32,14 +32,15 @@ void main()
 
 	vec4 txl = texture(tex0, vec2(x, y));
 
-	float dxr = shift(txl.x, x, y, time);
-	float dyr = shift(txl.x, x, y, time);
+	float noise_rnd = float((time / 100) * 100);
+	float dxr = shift(txl.x, x, y, noise_rnd);
+	float dyr = shift(txl.x, x, y, noise_rnd);
 
-	float dxg = shift(txl.y, x, y, time);
-	float dyg = shift(txl.y, x, y, time);
+	float dxg = shift(txl.y, x, y, noise_rnd);
+	float dyg = shift(txl.y, x, y, noise_rnd);
 
-	float dxb = shift(txl.z, x, y, time);
-	float dyb = shift(txl.z, x, y, time);
+	float dxb = shift(txl.z, x, y, noise_rnd);
+	float dyb = shift(txl.z, x, y, noise_rnd);
 
 	float r = texture(tex0, vec2(clamp(x + dxr), clamp(1 - y + dyr))).x;
 	float g = texture(tex0, vec2(clamp(x + dxg), clamp(1 - y + dyg))).y;
